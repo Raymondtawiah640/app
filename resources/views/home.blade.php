@@ -145,10 +145,10 @@
                 The all-in-one platform that helps you manage, grow, and scale your business with powerful tools and insights
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in">
-                <a href="/register.html" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                <a href="/message" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
                     Get Started Free
                 </a>
-                <a href="#features" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-600 transition-colors">
+                <a href="/post" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-600 transition-colors">
                     Learn More
                 </a>
             </div>

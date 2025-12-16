@@ -17,6 +17,7 @@ class UserController extends Controller{
             return view('login');
         }
 
+
         public function login(Request $request){
         $incomingFields = $request->validate([
             'loginemail' => 'required',
@@ -30,10 +31,12 @@ class UserController extends Controller{
             return back()->withErrors(['login' => 'Invalid credentials']);
         }
     }
-     public function logout(){
-        Auth::logout();
-        return redirect('/');
-    }
+     public function logout(Request $request){
+         Auth::logout();
+         $request->session()->invalidate();
+         $request->session()->regenerateToken();
+         return redirect('/')->with('success', 'You have been logged out successfully.');
+     }
 
     public function register(Request $request){
         $incomingFields = $request->validate([
