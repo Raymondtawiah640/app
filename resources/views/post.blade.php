@@ -104,9 +104,13 @@
                         {{ $post->title }} by {{ $post->user->name ?? 'Unknown User' }}
                     </h2>
 
-                    <p class="text-gray-700 mb-4 line-clamp-3">
-                        {{ $post->body }}
+                    <p class="text-gray-700 mb-4 post-content" data-full-content="{{ $post->body }}">
+                        {{ Str::limit($post->body, 150) }}
                     </p>
+                    <button class="show-more-btn text-blue-600 hover:text-blue-700 font-medium text-sm mb-4"
+                            data-post-id="{{ $post->id }}">
+                        Show more →
+                    </button>
 
                     <!-- Action Buttons -->
                     <div class="flex items-center gap-3 mb-4">
@@ -132,9 +136,6 @@
                         </form>
                     </div>
 
-                    <a href="#" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
-                        Read more →
-                    </a>
                 </div>
                 @endforeach
             </div>
@@ -157,5 +158,32 @@
             </div>
         </div>
     </div>
+    <script>
+        // Show more/less functionality for post content
+        document.addEventListener('DOMContentLoaded', function() {
+            const showMoreButtons = document.querySelectorAll('.show-more-btn');
+            
+            showMoreButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = this.getAttribute('data-post-id');
+                    const postContent = this.previousElementSibling;
+                    const fullContent = postContent.getAttribute('data-full-content');
+                    const isExpanded = postContent.classList.contains('expanded');
+                    
+                    if (isExpanded) {
+                        // Show less
+                        postContent.textContent = "{{ Str::limit('', 150) }}".substring(0, 150) + (fullContent.length > 150 ? '...' : '');
+                        postContent.classList.remove('expanded');
+                        this.textContent = 'Show more →';
+                    } else {
+                        // Show more
+                        postContent.textContent = fullContent;
+                        postContent.classList.add('expanded');
+                        this.textContent = 'Show less ↑';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
