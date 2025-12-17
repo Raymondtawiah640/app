@@ -25,11 +25,11 @@
     <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="/home" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <a href="/" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     YourBrand
                 </a>
                 <div class="flex items-center space-x-4">
-                    <a href="/home" class="text-gray-600 hover:text-gray-900 transition-colors">
+                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
                         Back to Home
                     </a>
                 </div>
@@ -47,7 +47,7 @@
             </div>
 
             <!-- Post Form -->
-            <form id="postForm" class="bg-white shadow-lg rounded-xl p-8 space-y-6 fade-in" action="/create_posts" method="post">
+            <form  class="bg-white shadow-lg rounded-xl p-8 space-y-6 fade-in" action="/create_posts" method="post">
                 @csrf
                 <!-- Title -->
                 <div>
@@ -67,15 +67,22 @@
                 <!-- Body -->
                 <div>
                     <label for="body" class="block text-sm text-gray-700 mb-2">Body</label>
-                    <textarea 
-                        id="body" 
+                    <textarea
+                        id="body"
                         name="body"
                         required
-                        rows="10"
+                        rows="15"
+                        maxlength="300"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
                         placeholder="Write your post content here..."
-                    ></textarea>
-                    <p class="text-xs text-gray-500 mt-2">Share your ideas, stories, or updates</p>
+                        oninput="updateCharacterCount()"
+                    >A man had two sons. The younger said to his father, 'Father, give me my share of the inheritance.' Though it saddened him, the father divided his property. Soon after, the younger son gathered everything and left for a distant land. There, he wasted his wealth in reckless living. When all his money was gone, a severe famine swept the land, and he began to suffer.</textarea>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="text-xs text-gray-500">Share your ideas, stories, or updates</p>
+                        <p class="text-xs text-gray-500">
+                            <span id="charCount">0</span>/300 characters
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -115,5 +122,30 @@
             </div>
         </div>
     </div>
+    <script>
+        // Character counter for post body
+        function updateCharacterCount() {
+            const bodyInput = document.getElementById('body');
+            const charCount = document.getElementById('charCount');
+            const currentLength = bodyInput.value.length;
+            
+            charCount.textContent = currentLength;
+            
+            // Change color if approaching limit
+            if (currentLength > 270) {
+                charCount.classList.remove('text-gray-500');
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-red-500');
+                charCount.classList.add('text-gray-500');
+            }
+        }
+        
+        // Initialize character count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharacterCount();
+        });
+    </script>
 </body>
 </html>
+

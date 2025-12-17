@@ -80,7 +80,7 @@
             </div>
 
             <!-- Posts List -->
-            <div class="space-y-6">
+            <div class="space-y-6" id="postsContainer">
                 @foreach ($posts as $post)
                 <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 post-card">
                     <div class="flex items-start justify-between mb-4">
@@ -126,7 +126,7 @@
                             @CSRF
                             @method('Delete')
                             <button type="submit"
-                                    onclick="return confirm('Are you sure you want to delete this post?')"
+                                    onclick="return confirm('Are you sure you want to delete this post {{$post->title}}?')"
                                     class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -152,9 +152,14 @@
 
             <!-- Load More Button -->
             <div class="text-center mt-8">
-                <button id="loadMoreBtn" class="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                @if ($posts instanceof \Illuminate\Pagination\LengthAwarePaginator && $posts->hasMorePages())
+                <button id="loadMoreBtn"
+                        class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        data-current-page="1"
+                        data-total-pages="{{ $posts->lastPage() }}">
                     Load More Posts
                 </button>
+                @endif
             </div>
         </div>
     </div>
@@ -183,6 +188,58 @@
                     }
                 });
             });
+        });
+        
+        // Load More functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    const currentPage = parseInt(this.getAttribute('data-current-page'));
+                    const totalPages = parseInt(this.getAttribute('data-total-pages'));
+                    const nextPage = currentPage + 1;
+                    
+                    if (nextPage > totalPages) {
+                        this.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Show loading state
+                    this.textContent = 'Loading...';
+                    this.disabled = true;
+                    
+                    // Fetch more posts via AJAX
+                    fetch(`/posts?page=${nextPage}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newPosts = doc.querySelectorAll('#postsContainer .post-card');
+                            
+                            // Append new posts to the container
+                            const postsContainer = document.getElementById('postsContainer');
+                            newPosts.forEach(post => {
+                                postsContainer.appendChild(post);
+                            });
+                            
+                            // Update button state
+                            this.setAttribute('data-current-page', nextPage);
+                            this.textContent = 'Load More Posts';
+                            this.disabled = false;
+                            
+                            // Hide button if no more pages
+                            if (nextPage >= totalPages) {
+                                this.style.display = 'none';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading more posts:', error);
+                            this.textContent = 'Load More Posts';
+                            this.disabled = false;
+                        });
+                });
+            }
         });
     </script>
 </body>

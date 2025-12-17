@@ -28,7 +28,7 @@ class postController extends Controller
     
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
-            'body' => 'required|min:10|max:1000'
+            'body' => 'required|min:10|max:300'
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
@@ -46,17 +46,19 @@ class postController extends Controller
     }
     return view('edit', ['post' => $post]);
 }
-    public function showPosts(){
-        //Toavoid error if user is not authenticated
-        $posts = [];
-        if (Auth::check()) {
-        //Get posts for the authenticated user
-        $posts = auth::user()->posts()->latest()->get();
-        }
-        //It begins from the pespective of block Post
-        //$posts = Post::where('user_id', Auth::id())->get();
-        return view('post', ['posts' => $posts]);
-    }
+   public function showPosts(Request $request){
+       //To avoid error if user is not authenticated
+       $posts = [];
+       if (Auth::check()) {
+           //Get posts for the authenticated user with pagination
+           // Default to 5 posts per page, can be adjusted via request
+           $perPage = $request->input('per_page', 5);
+           $posts = auth::user()->posts()->latest()->paginate($perPage);
+       }
+       //It begins from the perspective of block Post
+       //$posts = Post::where('user_id', Auth::id())->get();
+       return view('post', ['posts' => $posts]);
+   }
 
     public function message(){
         return view('message');
@@ -69,7 +71,7 @@ class postController extends Controller
 
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
-            'body' => 'required|min:10|max:1000'
+            'body' => 'required|max:300'
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
