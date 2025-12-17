@@ -29,7 +29,7 @@
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="/homepage.html" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <a class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     YourBrand
                 </a>
                 <div class="flex items-center space-x-4">
@@ -39,7 +39,10 @@
                     <a href="/message" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         Create Post
                     </a>
-                    <a href="/posts" class="text-gray-600 hover:text-gray-900 transition-colors">
+                    <a href="/drafts" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        Drafts
+                    </a>
+                    <a href="/post" class="text-gray-600 hover:text-gray-900 transition-colors">
                         All Posts
                     </a>
                 </div>
@@ -165,7 +168,7 @@
             </div>
 
             <!-- Empty State -->
-            <div id="emptyState" class="{{ $posts->count() == 0 ? '' : 'hidden' }} text-center py-12">
+            <div id="emptyState" class="hidden text-center py-12">
                 <div class="text-6xl mb-4">{{ request('search') ? '🔍' : '�' }}</div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">
                     {{ request('search') ? 'No posts found' : 'No posts yet' }}

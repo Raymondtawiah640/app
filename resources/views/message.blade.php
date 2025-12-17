@@ -25,10 +25,16 @@
     <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <a  class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     YourBrand
                 </a>
                 <div class="flex items-center space-x-4">
+                    <a href="/drafts" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        Drafts
+                    </a>
+                    <a href="/post" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        All Posts
+                    </a>
                     <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
                         Back to Home
                     </a>
@@ -49,6 +55,7 @@
             <!-- Post Form -->
             <form  class="bg-white shadow-lg rounded-xl p-8 space-y-6 fade-in" action="/create_posts" method="post">
                 @csrf
+                <input type="hidden" name="status" id="status" value="published">
                 <!-- Title -->
                 <div>
                     <label for="title" class="block text-sm text-gray-700 mb-2">Title</label>
@@ -87,27 +94,30 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button 
+                    <button
                         type="submit"
+                        name="action"
+                        value="publish"
                         class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         Publish Post
                     </button>
-                    {{-- <button 
-                        type="button"
-                        id="saveDraft"
+                    <button
+                        type="submit"
+                        name="action"
+                        value="draft"
                         class="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-300 transition-all"
                     >
                         Save as Draft
-                    </button> --}}
+                    </button>
                 </div>
 
                 <!-- Cancel Link -->
-                {{-- <p class="text-center text-sm text-gray-600">
-                    <a href="/homepage.html" class="text-blue-600 hover:text-blue-700 transition-colors">
+                <p class="text-center text-sm text-gray-600">
+                    <a href="/post" class="text-blue-600 hover:text-blue-700 transition-colors">
                         Cancel and go back
                     </a>
-                </p> --}}
+                </p>
             </form>
 
             <!-- Tips Section -->

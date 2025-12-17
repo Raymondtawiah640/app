@@ -54,15 +54,15 @@
             <!-- Header -->
             <div class="mb-8 fade-in">
                 <div class="flex items-center mb-4">
-                    <a href="/posts" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4">
+                    <a href="/post" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors mr-4">
                         <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
                         Back to Posts
                     </a>
                 </div>
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Edit Post</h1>
-                <p class="text-gray-600">Update your post content</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Edit {{ $post->status === 'draft' ? 'Draft' : 'Post' }}</h1>
+                <p class="text-gray-600">{{ $post->status === 'draft' ? 'Update your draft or publish it' : 'Update your post content' }}</p>
             </div>
 
             <!-- Edit Form -->
@@ -104,18 +104,32 @@
 
                     <!-- Action Buttons -->
                     <div class="flex items-center gap-4 pt-4">
-                        <button 
+                        <button
                             type="submit"
                             class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            Update Post
+                            {{ $post->status === 'draft' ? 'Update Draft' : 'Update Post' }}
                         </button>
-                        
-                        <a 
-                            href="/posts"
+
+                        @if($post->status === 'draft')
+                        <button
+                            type="submit"
+                            name="status"
+                            value="published"
+                            class="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        >
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Publish
+                        </button>
+                        @endif
+
+                        <a
+                            href="{{ $post->status === 'draft' ? route('drafts.index') : '/post' }}"
                             class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                         >
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

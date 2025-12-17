@@ -20,6 +20,13 @@ class postController extends Controller
         return view('posts', ['posts' => $posts]);
     }
 
+    public function draft(Post $post){
+        if (Auth::id() !== $post->user_id) {
+            return $this->redirectToHome('error', 'You are not authorized to view this post.');
+        }
+        return view('edit', ['post' => $post]);
+    }
+
     public function destroy(Post $post){
         if (Auth::id() === $post->user_id) {
            $post->delete();
@@ -36,7 +43,8 @@ class postController extends Controller
 
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
-            'body' => 'required|min:10|max:300'
+            'body' => 'required|min:10|max:300',
+            'status' => 'sometimes|in:published,draft'
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
@@ -61,7 +69,7 @@ class postController extends Controller
             // Default to 5 posts per page, can be adjusted via request
             $perPage = $request->input('per_page', 5);
 
-            $query = Auth::user()->posts()->latest();
+            $query = Auth::user()->posts()->where('status', 'published')->latest();
 
             // Handle search functionality
             if ($request->has('search') && !empty($request->search)) {
@@ -73,6 +81,8 @@ class postController extends Controller
             }
 
             $posts = $query->paginate($perPage);
+        }else{
+            return redirect('/login')->with('error', 'Please login to view posts.');
         }
         //It begins from the perspective of block Post
         //$posts = Post::where('user_id', Auth::id())->get();
@@ -83,6 +93,15 @@ class postController extends Controller
         return view('message');
     }
 
+    public function showDrafts(){
+        if (!Auth::check()) {
+            return redirect('/login')->with('error', 'Please login to view drafts.');
+        }
+
+        $drafts = Auth::user()->posts()->where('status', 'draft')->latest()->paginate(5);
+        return view('drafts', ['drafts' => $drafts]);
+    }
+
     public function createPost(Request $request){
         if (!Auth::check()) {
             return redirect('/login')->with('error', 'Please login to create posts.');
@@ -90,16 +109,19 @@ class postController extends Controller
 
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
-            'body' => 'required|max:200'
+            'body' => 'required|max:200',
+            'status' => 'sometimes|in:published,draft'
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
         $incomingFields['body'] = strip_tags($incomingFields['body']);
         $incomingFields['user_id'] = Auth::id();
+        $incomingFields['status'] = $request->input('action') === 'draft' ? 'draft' : 'published';
 
         Post::create($incomingFields);
 
-        return $this->redirectToHome('success', 'Post created successfully!');
+        $message = $incomingFields['status'] === 'draft' ? 'Draft saved successfully!' : 'Post created successfully!';
+        return $this->redirectToHome('success', $message);
         //return redirect('/')->with('success', 'Post created successfully!');
     }
 }
