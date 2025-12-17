@@ -76,11 +76,11 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
                         placeholder="Write your post content here..."
                         oninput="updateCharacterCount()"
-                    >A man had two sons. The younger said to his father, 'Father, give me my share of the inheritance.' Though it saddened him, the father divided his property. Soon after, the younger son gathered everything and left for a distant land. There, he wasted his wealth in reckless living. When all his money was gone, a severe famine swept the land, and he began to suffer.</textarea>
+                    ></textarea>
                     <div class="flex justify-between items-center mt-2">
                         <p class="text-xs text-gray-500">Share your ideas, stories, or updates</p>
                         <p class="text-xs text-gray-500">
-                            <span id="charCount">0</span>/300 characters
+                            <span id="charCount">0</span>/200 characters
                         </p>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
             charCount.textContent = currentLength;
             
             // Change color if approaching limit
-            if (currentLength > 270) {
+            if (currentLength > 170) {
                 charCount.classList.remove('text-gray-500');
                 charCount.classList.add('text-red-500');
             } else {

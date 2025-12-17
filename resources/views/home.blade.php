@@ -37,7 +37,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <a href="/contact" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <a  class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         YourBrand
                     </a>
                 </div>
@@ -49,6 +49,7 @@
                     <a href="#pricing" class="text-gray-700 hover:text-blue-600 transition-colors">Pricing</a>
                     <a href="#testimonials" class="text-gray-700 hover:text-blue-600 transition-colors">Testimonials</a>
                     <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+                    <a href="/post" class="text-gray-700 hover:text-blue-600 transition-colors">Post</a>
                 </div>
 
                 <!-- Auth Buttons (Desktop) -->
@@ -546,7 +547,7 @@
                 Join thousands of businesses already using our platform. Start your free 14-day trial today.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/register.html" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+                <a href="/register" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
                     Start Free Trial
                 </a>
                 <a href="#contact" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-600 transition-colors">

@@ -24,7 +24,7 @@ class UserController extends Controller{
             'loginpassword' => 'required'
         ]);
 
-        if (auth::attempt(['email' => $incomingFields['loginemail'], 'password' => $incomingFields['loginpassword']])){
+        if (Auth::attempt(['email' => $incomingFields['loginemail'], 'password' => $incomingFields['loginpassword']])){
             $request->session()->regenerate();
             return redirect('/');
         } else {

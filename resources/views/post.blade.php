@@ -52,8 +52,16 @@
         <div class="max-w-4xl mx-auto">
             <!-- Header -->
             <div class="mb-8 fade-in">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">All Posts</h1>
-                <p class="text-gray-600">Discover what the community is sharing</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                    {{ request('search') ? 'Search Results' : 'All Posts' }}
+                </h1>
+                <p class="text-gray-600">
+                    @if(request('search'))
+                        Found {{ $posts->total() }} result{{ $posts->total() !== 1 ? 's' : '' }} for "{{ request('search') }}"
+                    @else
+                        Discover what the community is sharing
+                    @endif
+                </p>
             </div>
 
             <!-- Filter/Sort Options -->
@@ -70,12 +78,28 @@
                     </button>
                 </div>
                 <div class="w-full sm:w-auto">
-                    <input 
-                        type="text" 
-                        id="searchInput"
-                        placeholder="Search posts..."
-                        class="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
+                    <form id="searchForm" method="GET" action="{{ route('posts') }}" class="flex">
+                        <div class="relative">
+                            <input
+                                type="text"
+                                id="searchInput"
+                                name="search"
+                                placeholder="Search posts..."
+                                value="{{ request('search') }}"
+                                class="w-full sm:w-64 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        @if(request('search'))
+                            <a href="{{ route('posts') }}" class="ml-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                Clear
+                            </a>
+                        @endif
+                    </form>
                 </div>
             </div>
 
@@ -141,13 +165,28 @@
             </div>
 
             <!-- Empty State -->
-            <div id="emptyState" class="hidden text-center py-12">
-                <div class="text-6xl mb-4">📝</div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">No posts found</h3>
-                <p class="text-gray-600 mb-6">Be the first to create a post!</p>
-                <a href="/message" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                    Create Post
-                </a>
+            <div id="emptyState" class="{{ $posts->count() == 0 ? '' : 'hidden' }} text-center py-12">
+                <div class="text-6xl mb-4">{{ request('search') ? '🔍' : '�' }}</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                    {{ request('search') ? 'No posts found' : 'No posts yet' }}
+                </h3>
+                <p class="text-gray-600 mb-6">
+                    {{ request('search') ? 'Try adjusting your search terms or clear the search to see all posts.' : 'Be the first to create a post!' }}
+                </p>
+                @if(request('search'))
+                    <div class="space-x-4">
+                        <a href="{{ route('posts') }}" class="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                            Clear Search
+                        </a>
+                        <a href="/message" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            Create Post
+                        </a>
+                    </div>
+                @else
+                    <a href="/message" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        Create Post
+                    </a>
+                @endif
             </div>
 
             <!-- Load More Button -->
@@ -167,14 +206,14 @@
         // Show more/less functionality for post content
         document.addEventListener('DOMContentLoaded', function() {
             const showMoreButtons = document.querySelectorAll('.show-more-btn');
-            
+
             showMoreButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const postId = this.getAttribute('data-post-id');
                     const postContent = this.previousElementSibling;
                     const fullContent = postContent.getAttribute('data-full-content');
                     const isExpanded = postContent.classList.contains('expanded');
-                    
+
                     if (isExpanded) {
                         // Show less
                         postContent.textContent = "{{ Str::limit('', 150) }}".substring(0, 150) + (fullContent.length > 150 ? '...' : '');
@@ -188,6 +227,30 @@
                     }
                 });
             });
+
+            // Search functionality with debounce
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchForm');
+            let searchTimeout;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function() {
+                        if (searchInput.value.length >= 2 || searchInput.value.length === 0) {
+                            searchForm.submit();
+                        }
+                    }, 500); // Wait 500ms after user stops typing
+                });
+
+                // Clear search on Escape key
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        searchInput.value = '';
+                        searchForm.submit();
+                    }
+                });
+            }
         });
         
         // Load More functionality

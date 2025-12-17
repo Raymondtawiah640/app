@@ -9,23 +9,31 @@ class postController extends Controller
 {
 
     private function redirectToHome($type = 'success', $message = null){
-        return redirect('/')->with($type, $message);
+        return redirect('/post')->with($type, $message);
+    }
 
+    public function search(Request $request){
+        $searchTerm = $request->input('search');
+        $posts = Post::where('title', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('body', 'LIKE', "%{$searchTerm}%")
+            ->paginate(5);
+        return view('posts', ['posts' => $posts]);
     }
 
     public function destroy(Post $post){
         if (Auth::id() === $post->user_id) {
            $post->delete();
-    }
+           return $this->redirectToHome('success', 'Post deleted successfully!');
+        }
 
-        return $this->redirectToHome('success', 'Post deleted successfully!');
+        return $this->redirectToHome('error', 'You are not authorized to delete this post.');
     }
 
     public function update(Request $request, Post $post){
         if (Auth::id() !== $post->user_id) {
             return $this->redirectToHome('error', 'You are not authorized to update this post.');
-    }
-    
+        }
+
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
             'body' => 'required|min:10|max:300'
@@ -37,28 +45,39 @@ class postController extends Controller
         $post->update($incomingFields);
 
         return $this->redirectToHome('success', 'Post updated successfully!');
-        //return redirect('/')->with('success', 'Post updated successfully!');
     }
 
     public function edit(Post $post){
         if (Auth::id() !== $post->user_id) {
             return $this->redirectToHome('error', 'You are not authorized to edit this post.');
+        }
+        return view('edit', ['post' => $post]);
     }
-    return view('edit', ['post' => $post]);
-}
    public function showPosts(Request $request){
-       //To avoid error if user is not authenticated
-       $posts = [];
-       if (Auth::check()) {
-           //Get posts for the authenticated user with pagination
-           // Default to 5 posts per page, can be adjusted via request
-           $perPage = $request->input('per_page', 5);
-           $posts = auth::user()->posts()->latest()->paginate($perPage);
-       }
-       //It begins from the perspective of block Post
-       //$posts = Post::where('user_id', Auth::id())->get();
-       return view('post', ['posts' => $posts]);
-   }
+        //To avoid error if user is not authenticated
+        $posts = [];
+        if (Auth::check()) {
+            //Get posts for the authenticated user with pagination
+            // Default to 5 posts per page, can be adjusted via request
+            $perPage = $request->input('per_page', 5);
+
+            $query = Auth::user()->posts()->latest();
+
+            // Handle search functionality
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'LIKE', '%' . $searchTerm . '%')
+                      ->orWhere('body', 'LIKE', '%' . $searchTerm . '%');
+                });
+            }
+
+            $posts = $query->paginate($perPage);
+        }
+        //It begins from the perspective of block Post
+        //$posts = Post::where('user_id', Auth::id())->get();
+        return view('post', ['posts' => $posts]);
+    }
 
     public function message(){
         return view('message');
@@ -71,7 +90,7 @@ class postController extends Controller
 
         $incomingFields = $request->validate([
             'title' => 'required|min:5|max:100',
-            'body' => 'required|max:300'
+            'body' => 'required|max:200'
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);

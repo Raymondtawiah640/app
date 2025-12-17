@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 use App\Http\Controllers\contactController;
 use App\Http\Controllers\UserController;
@@ -11,17 +11,17 @@ Route::get('/', function () {
 
 // Posts route (public - to display all posts)
 Route::get('/post', [postController::class, 'showPosts'])->name('posts');
-
 // Post routes (protected)
 Route::get('/message', [postController::class, 'message'])->middleware('auth')->name('message');
 Route::post('/create_posts', [postController::class, 'createPost'])->middleware('auth')->name('create_posts');
+Route::get('/search', [postController::class, 'search'])->middleware('auth')->name('search');
 
 // Authentication routes
-Route::get('/register', [UserController::class, 'showRegister']);
-Route::post('/register', [UserController::class, 'register']);
-Route::get('/login', [UserController::class, 'showLogin']);
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout']);
+Route::get('/register', [UserController::class, 'showRegister'])->name('register');
+Route::post('/register', [UserController::class, 'register'])->name('register');
+Route::get('/login', [UserController::class, 'showLogin'])->name('login');
+Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::get('edit/{post}', [postController::class, 'edit']);
 Route::put('edit/{post}', [postController::class, 'update']);
