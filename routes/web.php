@@ -3,6 +3,7 @@
 use App\Http\Controllers\contactController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\postController;
+use App\Http\Controllers\schoolController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,3 +33,8 @@ Route::get('drafts/{post}', [postController::class, 'draft'])->name('drafts.edit
 // Contact form route
 Route::post('/contact', [contactController::class, 'submitContactForm']);
 Route::get('/contact', [contactController::class, 'displayContactMessage']);
+
+// Schools routes
+Route::get('/schools', [schoolController::class, 'index'])->name('schools.index');
+Route::post('/schools', [schoolController::class, 'uploadSchools'])->name('schools.upload');
+Route::post('/schools/store', [schoolController::class, 'store'])->name('schools.store');
